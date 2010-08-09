@@ -22,7 +22,9 @@ people to the right information for their area. But we still ask them for their
 address and ZIP code and only rely on their location data once we have that.
 *******************************************************************************
 
-EXAMPLE USAGE:
+
+EXAMPLE USAGE
+-------------
 Here's an example (put this in the <head> section of your HTML & insert your
 Google API key where appropriate):
 
@@ -56,7 +58,17 @@ Then, using jQuery, you can do this to call it when the document is ready:
 And that should be it.
 
 
+TESTING
+-------
+If you have SpiderMonkey installed (Mozilla's Javascript engine which can be
+installed as a standalone executable), then you can run the included test
+suite:
+
+js test.js
+
+
 GITHUB, FTW.
+------------
 Fork the project here: http://github.com/dnclabs/demlocator
 
 Report bugs here: http://github.com/dnclabs/demlocator/issues
