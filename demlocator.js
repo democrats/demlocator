@@ -33,6 +33,15 @@
 function DemLocator() {
   var obj = this;
   var locationData = {};
+  var debug = false;
+
+  this.setDebug = function(debug) {
+    this.debug = debug;
+  }
+
+  function debugLog(msg) {
+    if (obj.debug) console.log("DEBUG: " + msg);
+  }
 
   this.getIPLocation = function() {
     locationData.country = google.loader.ClientLocation.address.country;
@@ -44,14 +53,17 @@ function DemLocator() {
 
   this.geo_step2_success_callback = function(response) {
     if (!response || response.Status.code != 200) {
+      debugLog("Got a bad response from reverse-geocoder, attempting IP location");
       if ( google.loader.ClientLocation ) {
         obj.getIPLocation();
+        debugLog("IP location successful");
         obj.success_callback(locationData);
         return;
       }
       obj.error_callback("Got bad response from geolocator service");
       return;
     }
+    debugLog("Reverse-geocoding successful");
     var place = response.Placemark[0];
     locationData.country = place.AddressDetails.Country.CountryNameCode;
     if ('US' == locationData.country) {
@@ -69,18 +81,20 @@ function DemLocator() {
   this.geo_step1_success_callback = function(position) {
     var latlng = new GLatLng(position.coords.latitude,position.coords.longitude);
     var geocoder = new GClientGeocoder();
+    debugLog("Got lat/lng, attempting to reverse-geocode");
     geocoder.getLocations(latlng, obj.geo_step2_success_callback, obj.geo_error_callback);
   };
 
   this.geo_error_callback = function(error) {
+    debugLog("HTML5 geocoding failed, attempting IP location");
     if ( google.loader.ClientLocation ) {
       obj.getIPLocation();
+      debugLog("IP location successful");
       obj.success_callback(locationData);
       return;
     }
-    this.error_callback(error)
+    obj.error_callback(error);
   };
-
 
   this.getLocation = function(success_callback, error_callback) {
     this.success_callback = success_callback;
@@ -88,9 +102,11 @@ function DemLocator() {
 
     // try HTML 5 browser geolocation
     if (navigator.geolocation) {
+      debugLog("Using HTML5 geolocation");
       navigator.geolocation.getCurrentPosition(this.geo_step1_success_callback, this.geo_error_callback);
     // try IP geolocation 
     } else if ( google.loader.ClientLocation ) {
+      debugLog("Using IP geolocation");
       obj.getIPLocation();
       this.success_callback(locationData);
     } else {

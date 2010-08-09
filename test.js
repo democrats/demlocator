@@ -1,5 +1,3 @@
-#!/usr/bin/env js -P
-
 load("demlocator.js");
 
 function TestNavigator(success) {
@@ -15,41 +13,45 @@ function TestNavigator(success) {
 
         success_callback(result);
       } else {
-        error_callback("Error");
+        error_callback("HTML5 geolocation error");
       }
     }
   }
 }
 
-function THEGOOGLE() {
-  this.loader = {
-    "ClientLocation" : {
-      "address" : {
-        "country" : "USA",
-        "region" : "Colorado"
+function THEGOOGLE(present) {
+  if (present) {
+    this.loader = {
+      "ClientLocation" : {
+        "address" : {
+          "country" : "USA",
+          "region" : "Colorado"
+        }
       }
     }
+  } else {
+    this.loader = {};
   }
 }
 
 function GLatLng(lat,lng) {
   this.lat = function() {
-    return lat
+    return lat;
   };
 
   this.lng = function() {
-    return lng
+    return lng;
   };
 }
 
-var geocode_success = true;
+var geocode_result = "good";
 function GClientGeocoder() {
   this.getLocations = function(latlng, success_callback, error_callback) {
     var response = {
       "Status" : {},
       "Placemark" : []
     };
-    if (geocode_success) {
+    if (geocode_result == "good") {
       response.Status.code = 200;
       response.Placemark[0] = {
         "AddressDetails" : {
@@ -69,9 +71,11 @@ function GClientGeocoder() {
         }
       };
       success_callback(response);
-    } else {
+    } else if (geocode_result == "fair") {
       response.Status.code = 404;
-      error_callback(response);
+      success_callback(response);
+    } else if (geocode_result == "bad") {
+      error_callback("Geocoder error");
     }
   }
 }
@@ -89,23 +93,71 @@ function handle_demlocator_success(result) {
 }
 
 function handle_demlocator_error(error) {
-  console.log("DemLocator failed. Sorry.");
+  console.log("DemLocator error: " + error);
 }
 
 
-var locator = new DemLocator();
-var navigator = new TestNavigator(true);
-var google = new THEGOOGLE();
-var console = new TestConsole();
+var locator;
+var navigator;
+var google;
+var console;
 
-// geocode success test
+function test_reset() {
+  locator = new DemLocator();
+  locator.setDebug(true);
+  navigator = new TestNavigator(true);
+  google = new THEGOOGLE(true);
+  console = new TestConsole();
+}
+
+// all good test
+test_reset();
 print("This test should say we're in Oklahoma, USA:");
 locator.getLocation(handle_demlocator_success, handle_demlocator_error);
 print("\n");
 
-// geocode fail test
+// geocode fair test
+test_reset();
 print("This test should say we're in Colorado, USA:");
-geocode_success = false;
+geocode_result = "fair";
+locator.getLocation(handle_demlocator_success, handle_demlocator_error);
+print("\n");
+
+// geocode bad test
+test_reset();
+print("This test should say we're in Colorado, USA:");
+geocode_result = "bad";
+locator.getLocation(handle_demlocator_success, handle_demlocator_error);
+print("\n");
+
+// geocode bad & IP bad test
+test_reset();
+print("This test should generate an error:");
+google = new THEGOOGLE(false);
+locator.getLocation(handle_demlocator_success, handle_demlocator_error);
+print("\n");
+
+// html5 bad test
+test_reset();
+print("This test should say we're in Colorado, USA:");
+navigator = new TestNavigator(false);
+geocode_result = "good";
+locator.getLocation(handle_demlocator_success, handle_demlocator_error);
+print("\n");
+
+// html5 not available test
+test_reset();
+print("This test should say we're in Colorado, USA:");
+navigator.geolocation = null;
+locator.getLocation(handle_demlocator_success, handle_demlocator_error);
+print("\n");
+
+// all bad test
+test_reset();
+print("This test should generate an error:");
+var google = new THEGOOGLE(false);
+navigator.geolocation = null;
+geocode_result = "bad";
 locator.getLocation(handle_demlocator_success, handle_demlocator_error);
 print("\n");
 
