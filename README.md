@@ -10,7 +10,7 @@ the Maps API for getting country, city, state, etc. information.
 
 ## WORDS TO THE WISE
 
-**Be aware that most browsers don't have a friggin' clue where they are. And
+Be aware that most browsers don't have a friggin' clue where they are. And
 IP-based geolocation is even worse. Some IPs have no geographic data associated
 with them at all, and the computer holding the address might not be that close
 to that location even when they do. The person using the computer could also be
@@ -20,10 +20,10 @@ Unless you get a fix from a GPS-equipped device, you shouldn't rely on this
 information for anything important (and maybe not even then, see above). For
 example, we at the DNC use it to make an educated guess and hopefully shortcut
 people to the right information for their area. But we still ask them for their
-address and ZIP code and only rely on their location data once we have that.**
+address and ZIP code and only rely on their location data once we have that.
 
 
-## EXAMPLE USAGE
+## Usage Example
 
 Here's an example (put this in the <head> section of your HTML & insert your
 Google API key where appropriate):
@@ -58,7 +58,7 @@ Then, using jQuery, you can do this to call it when the document is ready:
 And that should be it.
 
 
-## TESTING
+## Testing
 
 If you have SpiderMonkey installed (Mozilla's Javascript engine which can be
 installed as a standalone executable), then you can run the included test
@@ -67,7 +67,7 @@ suite:
     js test.js
 
 
-## GITHUB, FTW.
+## Github, FTW. 
 
 Fork the project here: [http://github.com/dnclabs/demlocator](http://github.com/dnclabs/demlocator)
 
