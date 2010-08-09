@@ -8,9 +8,9 @@ It depends on Google's AJAX & Maps APIs. Include them before you include
 demlocator.js. It uses the ClientLocation API for IP-based geolocation and
 the Maps API for getting country, city, state, etc. information.
 
-## **WORDS TO THE WISE
+## WORDS TO THE WISE
 
-Be aware that most browsers don't have a friggin' clue where they are. And
+**Be aware that most browsers don't have a friggin' clue where they are. And
 IP-based geolocation is even worse. Some IPs have no geographic data associated
 with them at all, and the computer holding the address might not be that close
 to that location even when they do. The person using the computer could also be
